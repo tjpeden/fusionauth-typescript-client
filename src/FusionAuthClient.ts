@@ -1119,6 +1119,32 @@ export class FusionAuthClient {
   }
 
   /**
+   * Retrieves all of the members of a family for a particular User by User Id.
+   *
+   * @param {string} userId The User's unique Id
+   */
+  retrieveFamilyMembers(userId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family')
+        .withUriSegment(userId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
+   * Retrieves all of the members of a family by the unique Family Id.
+   *
+   * @param {string} familyId The unique Id of the Family.
+   */
+  retrieveFamilyMembersByFamilyId(familyId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family')
+        .withUriSegment(familyId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
    * Retrieves the group for the given Id.
    *
    * @param {string} groupId The Id of the group.
