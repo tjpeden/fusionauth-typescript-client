@@ -1126,7 +1126,7 @@ export class FusionAuthClient {
   retrieveFamilies(userId: string): Promise<ClientResponse> {
     return this.start()
         .withUri('/api/user/family')
-        .withUriSegment(userId)
+        .withParameter('userId', userId)
         .withMethod("GET")
         .go();
   }
