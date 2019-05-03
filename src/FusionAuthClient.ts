@@ -1049,6 +1049,32 @@ export class FusionAuthClient {
   }
 
   /**
+   * Retrieve a single consents by id.
+   *
+   * @param {string} consentId The consent id
+   */
+  retrieveConsent(consentId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent')
+        .withUriSegment(consentId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
+   * Retrieves all of the consents that a user has.
+   *
+   * @param {string} userId The User's id
+   */
+  retrieveConsents(userId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent')
+        .withParameter('userId', userId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
    * Retrieves the daily active user report between the two instants. If you specify an application id, it will only
    * return the daily active counts for that application.
    *
@@ -1119,7 +1145,7 @@ export class FusionAuthClient {
   }
 
   /**
-   * Retrieves all of the families that a user belongs to, which could be an empty list.
+   * Retrieves all of the families that a user belongs to.
    *
    * @param {string} userId The User's id
    */
@@ -1736,6 +1762,19 @@ export class FusionAuthClient {
   }
 
   /**
+   * Revokes a single consent by id.
+   *
+   * @param {string} consentId The Consent id
+   */
+  revokeConsent(consentId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent')
+        .withUriSegment(consentId)
+        .withMethod("DELETE")
+        .go();
+  }
+
+  /**
    * Revokes a single refresh token, all tokens for a user or all tokens for an application. If you provide a user id
    * and an application id, this will delete all the refresh tokens for that user for that application.
    *
@@ -1903,6 +1942,21 @@ export class FusionAuthClient {
         .withUriSegment(applicationId)
         .withUriSegment("role")
         .withUriSegment(roleId)
+        .withJSONBody(request)
+        .withMethod("PUT")
+        .go();
+  }
+
+  /**
+   * Updates a single consent by id.
+   *
+   * @param {string} consentId The Consent id
+   * @param {Object} request The request that contains the consent information.
+   */
+  updateConsent(consentId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent')
+        .withUriSegment(consentId)
         .withJSONBody(request)
         .withMethod("PUT")
         .go();
