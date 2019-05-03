@@ -1062,6 +1062,17 @@ export class FusionAuthClient {
   }
 
   /**
+   * Retrieves all of the consent types
+   *
+   */
+  retrieveConsentTypes(): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent/type')
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
    * Retrieves all of the consents that a user has.
    *
    * @param {string} userId The User's id
