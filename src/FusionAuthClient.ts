@@ -1419,6 +1419,19 @@ export class FusionAuthClient {
   }
 
   /**
+   * Retrieves all of the children for the given parent email address.
+   *
+   * @param {string} parentEmail The email of the parent.
+   */
+  retrievePendingChildren(parentEmail: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family/pending')
+        .withParameter('parentEmail', parentEmail)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
    * Retrieves the last number of login records.
    *
    * @param {number} offset The initial record. e.g. 0 is the last login, 100 will be the 100th most recent login.
