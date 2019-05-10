@@ -151,6 +151,21 @@ export class FusionAuthClient {
   }
 
   /**
+   * Creates a user consent type. You can optionally specify an Id for the consent type, if not provided one will be generated.
+   *
+   * @param {string} consentId (Optional) The Id for the consent. If not provided a secure random UUID will be generated.
+   * @param {Object} request The request object that contains all of the information used to create the consent.
+   */
+  createConsent(consentId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/consent')
+        .withUriSegment(consentId)
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go();
+  }
+
+  /**
    * Creates an email template. You can optionally specify an Id for the template, if not provided one will be generated.
    *
    * @param {string} emailTemplateId (Optional) The Id for the template. If not provided a secure random UUID will be generated.
@@ -286,21 +301,6 @@ export class FusionAuthClient {
   }
 
   /**
-   * Creates a user consent type. You can optionally specify an Id for the consent type, if not provided one will be generated.
-   *
-   * @param {string} consentTypeId (Optional) The Id for the consent type. If not provided a secure random UUID will be generated.
-   * @param {Object} request The request object that contains all of the information used to create the user consent type.
-   */
-  createUserConsentType(consentTypeId: string, request): Promise<ClientResponse> {
-    return this.start()
-        .withUri('/api/user/consent/type')
-        .withUriSegment(consentTypeId)
-        .withJSONBody(request)
-        .withMethod("POST")
-        .go();
-  }
-
-  /**
    * Creates a webhook. You can optionally specify an Id for the webhook, if not provided one will be generated.
    *
    * @param {string} webhookId (Optional) The Id for the webhook. If not provided a secure random UUID will be generated.
@@ -397,6 +397,19 @@ export class FusionAuthClient {
         .withUriSegment(applicationId)
         .withUriSegment("role")
         .withUriSegment(roleId)
+        .withMethod("DELETE")
+        .go();
+  }
+
+  /**
+   * Deletes the consent for the given Id.
+   *
+   * @param {string} consentId The Id of the consent to delete.
+   */
+  deleteConsent(consentId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/consent')
+        .withUriSegment(consentId)
         .withMethod("DELETE")
         .go();
   }
@@ -546,19 +559,6 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/user-action-reason')
         .withUriSegment(userActionReasonId)
-        .withMethod("DELETE")
-        .go();
-  }
-
-  /**
-   * Deletes the user consent type for the given Id.
-   *
-   * @param {string} consentTypeId The Id of the user consent type to delete.
-   */
-  deleteUserConsentType(consentTypeId: string): Promise<ClientResponse> {
-    return this.start()
-        .withUri('/api/user/consent/type')
-        .withUriSegment(consentTypeId)
         .withMethod("DELETE")
         .go();
   }
@@ -1072,6 +1072,30 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/system/audit-log')
         .withUriSegment(auditLogId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
+   * Retrieves the Consent for the given Id.
+   *
+   * @param {string} consentId The Id of the consent.
+   */
+  retrieveConsent(consentId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/consent')
+        .withUriSegment(consentId)
+        .withMethod("GET")
+        .go();
+  }
+
+  /**
+   * Retrieves all of the consent.
+   *
+   */
+  retrieveConsents(): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/consent')
         .withMethod("GET")
         .go();
   }
@@ -1683,46 +1707,22 @@ export class FusionAuthClient {
   }
 
   /**
-   * Retrieve a single consents by id.
+   * Retrieve a single User consent by Id.
    *
-   * @param {string} consentId The consent id
+   * @param {string} userConsentId The User consent Id
    */
-  retrieveUserConsent(consentId: string): Promise<ClientResponse> {
+  retrieveUserConsent(userConsentId: string): Promise<ClientResponse> {
     return this.start()
         .withUri('/api/user/consent')
-        .withUriSegment(consentId)
+        .withUriSegment(userConsentId)
         .withMethod("GET")
         .go();
   }
 
   /**
-   * Retrieves the user consent type for the given Id.
+   * Retrieves all of the consents for a User.
    *
-   * @param {string} userConsentTypeId The Id of the user consent type.
-   */
-  retrieveUserConsentType(userConsentTypeId: string): Promise<ClientResponse> {
-    return this.start()
-        .withUri('/api/user/consent/type')
-        .withUriSegment(userConsentTypeId)
-        .withMethod("GET")
-        .go();
-  }
-
-  /**
-   * Retrieves all of the user consent types.
-   *
-   */
-  retrieveUserConsentTypes(): Promise<ClientResponse> {
-    return this.start()
-        .withUri('/api/user/consent/type')
-        .withMethod("GET")
-        .go();
-  }
-
-  /**
-   * Retrieves all of the consents that a user has.
-   *
-   * @param {string} userId The User's id
+   * @param {string} userId The User's Id
    */
   retrieveUserConsents(userId: string): Promise<ClientResponse> {
     return this.start()
@@ -2013,6 +2013,21 @@ export class FusionAuthClient {
   }
 
   /**
+   * Updates the consent with the given Id.
+   *
+   * @param {string} consentId The Id of the consent to update.
+   * @param {Object} request The request that contains all of the new consent information.
+   */
+  updateConsent(consentId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/consent')
+        .withUriSegment(consentId)
+        .withJSONBody(request)
+        .withMethod("PUT")
+        .go();
+  }
+
+  /**
    * Updates the email template with the given Id.
    *
    * @param {string} emailTemplateId The Id of the email template to update.
@@ -2198,21 +2213,6 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/user/consent')
         .withUriSegment(consentId)
-        .withJSONBody(request)
-        .withMethod("PUT")
-        .go();
-  }
-
-  /**
-   * Updates the consent type with the given Id.
-   *
-   * @param {string} consentTypeId The Id of the consent type to update.
-   * @param {Object} request The request that contains all of the new user consent type information.
-   */
-  updateUserConsentType(consentTypeId: string, request): Promise<ClientResponse> {
-    return this.start()
-        .withUri('/api/user/consent/type')
-        .withUriSegment(consentTypeId)
         .withJSONBody(request)
         .withMethod("PUT")
         .go();
