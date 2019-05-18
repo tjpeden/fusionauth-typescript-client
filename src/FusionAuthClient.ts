@@ -43,6 +43,21 @@ export class FusionAuthClient {
   }
 
   /**
+   * Adds a user to an existing family. The family id must be specified.
+   *
+   * @param {string} familyId The id of the family.
+   * @param {Object} request The request object that contains all of the information used to determine which user to add to the family.
+   */
+  addUserToFamily(familyId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family')
+        .withUriSegment(familyId)
+        .withJSONBody(request)
+        .withMethod("PUT")
+        .go();
+  }
+
+  /**
    * Cancels the user action.
    *
    * @param {string} actionId The action id of the action to cancel.
@@ -175,6 +190,22 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/email/template')
         .withUriSegment(emailTemplateId)
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go();
+  }
+
+  /**
+   * Creates a family with the user id in the request as the owner and sole member of the family. You can optionally specify an id for the
+   * family, if not provided one will be generated.
+   *
+   * @param {string} familyId (Optional) The id for the family. If not provided a secure random UUID will be generated.
+   * @param {Object} request The request object that contains all of the information used to create the family.
+   */
+  createFamily(familyId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family')
+        .withUriSegment(familyId)
         .withJSONBody(request)
         .withMethod("POST")
         .go();
@@ -952,6 +983,21 @@ export class FusionAuthClient {
         .withUriSegment(userId)
         .withJSONBody(request)
         .withMethod("POST")
+        .go();
+  }
+
+  /**
+   * Removes a user from the family with the given id.
+   *
+   * @param {string} familyId The id of the family to remove the user from.
+   * @param {string} userId The id of the user to remove from the family.
+   */
+  removeUserFromFamily(familyId: string, userId: string): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family')
+        .withUriSegment(familyId)
+        .withUriSegment(userId)
+        .withMethod("DELETE")
         .go();
   }
 
@@ -1921,6 +1967,19 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/email/send')
         .withUriSegment(emailTemplateId)
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go();
+  }
+
+  /**
+   * Sends out an email to a parent that they need to register and create a family or need to log in and add a child to their existing family.
+   *
+   * @param {Object} request The request object that contains the parent email.
+   */
+  sendFamilyRequestEmail(request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/family/request')
         .withJSONBody(request)
         .withMethod("POST")
         .go();
