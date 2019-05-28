@@ -332,6 +332,21 @@ export class FusionAuthClient {
   }
 
   /**
+   * Creates a single User consent.
+   *
+   * @param {string} userConsentId (Optional) The Id for the User consent. If not provided a secure random UUID will be generated.
+   * @param {Object} request The request that contains the user consent information.
+   */
+  createUserConsent(userConsentId: string, request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/user/consent')
+        .withUriSegment(userConsentId)
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go();
+  }
+
+  /**
    * Creates a webhook. You can optionally specify an Id for the webhook, if not provided one will be generated.
    *
    * @param {string} webhookId (Optional) The Id for the webhook. If not provided a secure random UUID will be generated.
@@ -1891,14 +1906,14 @@ export class FusionAuthClient {
   }
 
   /**
-   * Revokes a single consent by Id.
+   * Revokes a single User consent by Id.
    *
-   * @param {string} consentId The Consent Id
+   * @param {string} userConsentId The User Consent Id
    */
-  revokeUserConsent(consentId: string): Promise<ClientResponse> {
+  revokeUserConsent(userConsentId: string): Promise<ClientResponse> {
     return this.start()
         .withUri('/api/user/consent')
-        .withUriSegment(consentId)
+        .withUriSegment(userConsentId)
         .withMethod("DELETE")
         .go();
   }
@@ -2263,15 +2278,15 @@ export class FusionAuthClient {
   }
 
   /**
-   * Updates a single user consent by Id.
+   * Updates a single User consent by Id.
    *
-   * @param {string} consentId The Consent Id
+   * @param {string} userConsentId The User Consent Id
    * @param {Object} request The request that contains the user consent information.
    */
-  updateUserConsent(consentId: string, request): Promise<ClientResponse> {
+  updateUserConsent(userConsentId: string, request): Promise<ClientResponse> {
     return this.start()
         .withUri('/api/user/consent')
-        .withUriSegment(consentId)
+        .withUriSegment(userConsentId)
         .withJSONBody(request)
         .withMethod("PUT")
         .go();
