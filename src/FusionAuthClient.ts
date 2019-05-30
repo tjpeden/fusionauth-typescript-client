@@ -1945,6 +1945,19 @@ export class FusionAuthClient {
   }
 
   /**
+   * Searches the login records with the specified criteria and pagination.
+   *
+   * @param {Object} request The search criteria and pagination information.
+   */
+  searchLoginRecords(request): Promise<ClientResponse> {
+    return this.start()
+        .withUri('/api/system/login/search')
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go();
+  }
+
+  /**
    * Retrieves the users for the given ids. If any id is invalid, it is ignored.
    *
    * @param {Array<string>} ids The user ids to search for.
