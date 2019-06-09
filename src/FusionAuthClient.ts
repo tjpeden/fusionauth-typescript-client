@@ -1951,7 +1951,7 @@ export class FusionAuthClient {
    */
   searchLoginRecords(request): Promise<ClientResponse> {
     return this.start()
-        .withUri('/api/system/login/search')
+        .withUri('/api/system/login-record/search')
         .withJSONBody(request)
         .withMethod("POST")
         .go();
