@@ -1451,17 +1451,29 @@ export class FusionAuthClient {
   }
 
   /**
-   * Retrieves the Public Key configured for verifying JSON Web Tokens (JWT) by the key Id. If the key Id is provided a
-   * single public key will be returned if one is found by that id. If the optional parameter key Id is not provided all
-   * public keys will be returned.
+   * Retrieves the Public Key configured for verifying JSON Web Tokens (JWT) by the key Id (kid).
    *
-   * @param {string} keyId (Optional) The Id of the public key.
+   * @param {string} keyId The Id of the public key (kid).
    * @returns {Promise<ClientResponse<PublicKeyResponse>>}
    */
   retrieveJWTPublicKey(keyId: string): Promise<ClientResponse<PublicKeyResponse>> {
     return this.start()
         .withUri('/api/jwt/public-key')
-        .withUriSegment(keyId)
+        .withParameter('kid', keyId)
+        .withMethod("GET")
+        .go<PublicKeyResponse>();
+  }
+
+  /**
+   * Retrieves the Public Key configured for verifying the JSON Web Tokens (JWT) issued by the Login API by the Application Id.
+   *
+   * @param {string} applicationId The Id of the Application for which this key is used.
+   * @returns {Promise<ClientResponse<PublicKeyResponse>>}
+   */
+  retrieveJWTPublicKeyByApplicationId(applicationId: string): Promise<ClientResponse<PublicKeyResponse>> {
+    return this.start()
+        .withUri('/api/jwt/public-key')
+        .withParameter('applicationId', applicationId)
         .withMethod("GET")
         .go<PublicKeyResponse>();
   }
@@ -2713,17 +2725,6 @@ export interface AuditLog {
   reason?: string;
 }
 
-export interface AuditLogConfiguration {
-  delete?: DeleteConfiguration;
-}
-
-/**
- * @author Daniel DeGroff
- */
-export interface AuditLogExportRequest extends BaseExportRequest {
-  criteria?: AuditLogSearchCriteria;
-}
-
 /**
  * @author Brian Pontarelli
  */
@@ -2779,14 +2780,6 @@ export interface BaseEvent {
   createInstant?: number;
   id?: string;
   type?: EventType;
-}
-
-/**
- * @author Daniel DeGroff
- */
-export interface BaseExportRequest {
-  dateTimeSecondsFormat?: string;
-  zoneId?: string;
 }
 
 // Do not require a setter for 'type', it is defined by the concrete class and is not mutable
@@ -2880,52 +2873,6 @@ export interface CleanSpeakConfiguration extends Enableable {
 }
 
 /**
- * Models a consent.
- *
- * @author Daniel DeGroff
- */
-export interface Consent {
-  consentEmailTemplateId?: string;
-  countryMinimumAgeForSelfConsent?: LocalizedIntegers;
-  data?: Map<string, any>;
-  defaultMinimumAgeForSelfConsent?: number;
-  emailPlus?: EmailPlus;
-  id?: string;
-  multipleValuesAllowed?: boolean;
-  name?: string;
-  values?: Array<string>;
-}
-
-/**
- * API request for User consent types.
- *
- * @author Daniel DeGroff
- */
-export interface ConsentRequest {
-  consent?: Consent;
-}
-
-/**
- * API response for consent.
- *
- * @author Daniel DeGroff
- */
-export interface ConsentResponse {
-  consent?: Consent;
-  consents?: Array<Consent>;
-}
-
-/**
- * Models a consent.
- *
- * @author Daniel DeGroff
- */
-export enum ConsentStatus {
-  Active,
-  Revoked
-}
-
-/**
  * Status for content like usernames, profile attributes, etc.
  *
  * @author Brian Pontarelli
@@ -2952,10 +2899,6 @@ export interface Count {
 export interface DailyActiveUserReportResponse {
   dailyActiveUsers?: Array<Count>;
   total?: number;
-}
-
-export interface DeleteConfiguration extends Enableable {
-  numberOfDaysToRetain?: number;
 }
 
 /**
@@ -3037,12 +2980,6 @@ export interface EmailConfiguration extends Enableable {
   verificationEmailTemplateId?: string;
   verifyEmail?: boolean;
   verifyEmailWhenChanged?: boolean;
-}
-
-export interface EmailPlus extends Enableable {
-  emailTemplateId?: string;
-  maximumTimeToSendEmailInHours?: number;
-  minimumTimeToSendEmailInHours?: number;
 }
 
 export enum EmailSecurityType {
@@ -3311,75 +3248,6 @@ export interface FailedAuthenticationConfiguration {
   resetCountInSeconds?: number;
   tooManyAttempts?: number;
   userActionId?: string;
-}
-
-/**
- * Models a family grouping of users.
- *
- * @author Brian Pontarelli
- */
-export interface Family {
-  id?: string;
-  members?: Array<FamilyMember>;
-}
-
-export interface FamilyConfiguration extends Enableable {
-  allowChildRegistrations?: boolean;
-  confirmChildEmailTemplateId?: string;
-  deleteOrphanedAccounts?: boolean;
-  deleteOrphanedAccountsDays?: number;
-  familyRequestEmailTemplateId?: string;
-  maximumChildAge?: number;
-  minimumOwnerAge?: number;
-  parentEmailRequired?: boolean;
-  parentRegistrationEmailTemplateId?: string;
-}
-
-/**
- * API request for sending out family requests to parent's.
- *
- * @author Brian Pontarelli
- */
-export interface FamilyEmailRequest {
-  parentEmail?: string;
-}
-
-/**
- * Models a single family member.
- *
- * @author Brian Pontarelli
- */
-export interface FamilyMember {
-  data?: Map<string, any>;
-  insertInstant?: number;
-  owner?: boolean;
-  role?: FamilyRole;
-  userId?: string;
-}
-
-/**
- * API request for managing families and members.
- *
- * @author Brian Pontarelli
- */
-export interface FamilyRequest {
-  familyMember?: FamilyMember;
-}
-
-/**
- * API response for managing families and members.
- *
- * @author Brian Pontarelli
- */
-export interface FamilyResponse {
-  families?: Array<Family>;
-  family?: Family;
-}
-
-export enum FamilyRole {
-  Child,
-  Teen,
-  Adult
 }
 
 /**
@@ -3800,14 +3668,6 @@ export enum LambdaType {
 }
 
 /**
- * Models a set of localized Integers that can be stored as JSON.
- *
- * @author Daniel DeGroff
- */
-export interface LocalizedIntegers extends Map<string, number> {
-}
-
-/**
  * Models a set of localized Strings that can be stored as JSON.
  *
  * @author Brian Pontarelli
@@ -3853,45 +3713,6 @@ export interface LoginPreventedResponse {
   reasonCode?: string;
 }
 
-export interface LoginRecordConfiguration {
-  delete?: DeleteConfiguration;
-}
-
-/**
- * @author Daniel DeGroff
- */
-export interface LoginRecordExportRequest extends BaseExportRequest {
-  criteria?: LoginRecordSearchCriteria;
-}
-
-/**
- * @author Daniel DeGroff
- */
-export interface LoginRecordSearchCriteria extends BaseSearchCriteria {
-  applicationId?: string;
-  end?: number;
-  start?: number;
-  userId?: string;
-}
-
-/**
- * @author Daniel DeGroff
- */
-export interface LoginRecordSearchRequest {
-  retrieveTotal?: boolean;
-  search?: LoginRecordSearchCriteria;
-}
-
-/**
- * A raw login record response
- *
- * @author Daniel DeGroff
- */
-export interface LoginRecordSearchResponse {
-  logins?: Array<DisplayableRawLogin>;
-  total?: number;
-}
-
 /**
  * Response for the login report.
  *
@@ -3935,8 +3756,6 @@ export interface LoginTheme extends Enableable {
   helpers?: string;
   lastModified?: number;
   oauth2Authorize?: string;
-  oauth2ChildRegistrationNotAllowed?: string;
-  oauth2ChildRegistrationNotAllowedComplete?: string;
   oauth2CompleteRegistration?: string;
   oauth2Error?: string;
   oauth2Register?: string;
@@ -4069,6 +3888,9 @@ export enum OAuthErrorReason {
   invalid_user_credentials,
   invalid_grant_type,
   invalid_origin,
+  invalid_pkce_code_verifier_length,
+  invalid_pkce_code_challenge_length,
+  invalid_pkce_code_challenge_method,
   invalid_redirect_uri,
   invalid_response_type,
   grant_type_disabled,
@@ -4200,13 +4022,6 @@ export interface PasswordValidationRules {
  */
 export interface PasswordValidationRulesResponse {
   passwordValidationRules?: PasswordValidationRules;
-}
-
-/**
- * @author Brian Pontarelli
- */
-export interface PendingResponse {
-  users?: Array<User>;
 }
 
 /**
@@ -4507,7 +4322,6 @@ export interface SortField {
  * @author Brian Pontarelli
  */
 export interface SystemConfiguration {
-  auditLogConfiguration?: AuditLogConfiguration;
   cookieEncryptionIV?: string;
   cookieEncryptionKey?: string;
   data?: Map<string, any>;
@@ -4519,7 +4333,6 @@ export interface SystemConfiguration {
   httpSessionMaxInactiveInterval?: number;
   issuer?: string;
   jwtConfiguration?: JWTConfiguration;
-  loginRecordConfiguration?: LoginRecordConfiguration;
   logoutURL?: string;
   maximumPasswordAge?: MaximumPasswordAge;
   minimumPasswordAge?: MinimumPasswordAge;
@@ -4553,7 +4366,6 @@ export interface SystemConfigurationResponse {
 export interface Tenant {
   data?: Map<string, any>;
   emailConfiguration?: TenantEmailConfiguration;
-  familyConfiguration?: FamilyConfiguration;
   id?: string;
   name?: string;
 }
@@ -4694,7 +4506,6 @@ export interface TwoFactorRequest {
   code?: string;
   delivery?: TwoFactorDelivery;
   secret?: string;
-  secretBase32Encoded?: string;
 }
 
 /**
@@ -4738,7 +4549,6 @@ export interface User extends SecureIdentity {
   middleName?: string;
   mobilePhone?: string;
   name?: string;
-  parentEmail?: string;
   preferredLanguages?: Array<string>;
   registrations?: Array<UserRegistration>;
   tenantId?: string;
@@ -4938,43 +4748,6 @@ export interface UserCommentRequest {
 export interface UserCommentResponse {
   userComment?: UserComment;
   userComments?: Array<UserComment>;
-}
-
-/**
- * Models a User consent.
- *
- * @author Daniel DeGroff
- */
-export interface UserConsent {
-  consent?: Consent;
-  consentId?: string;
-  data?: Map<string, any>;
-  giverUserId?: string;
-  id?: string;
-  insertInstant?: number;
-  lastUpdateInstant?: number;
-  status?: ConsentStatus;
-  userId?: string;
-  values?: Array<string>;
-}
-
-/**
- * API response for User consent.
- *
- * @author Daniel DeGroff
- */
-export interface UserConsentRequest {
-  userConsent?: UserConsent;
-}
-
-/**
- * API response for User consent.
- *
- * @author Daniel DeGroff
- */
-export interface UserConsentResponse {
-  userConsent?: UserConsent;
-  userConsents?: Array<UserConsent>;
 }
 
 /**
