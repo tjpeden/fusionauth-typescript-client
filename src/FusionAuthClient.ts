@@ -304,6 +304,22 @@ export class FusionAuthClient {
   }
 
   /**
+   * Creates a Theme. You can optionally specify an Id for the theme, if not provided one will be generated.
+   *
+   * @param {string} themeId (Optional) The Id for the theme. If not provided a secure random UUID will be generated.
+   * @param {ThemeRequest} request The request object that contains all of the information used to create the theme.
+   * @returns {Promise<ClientResponse<ThemeResponse>>}
+   */
+  createTheme(themeId: string, request: ThemeRequest): Promise<ClientResponse<ThemeResponse>> {
+    return this.start()
+        .withUri('/api/theme')
+        .withUriSegment(themeId)
+        .withJSONBody(request)
+        .withMethod("POST")
+        .go<ThemeResponse>();
+  }
+
+  /**
    * Creates a user. You can optionally specify an Id for the user, if not provided one will be generated.
    *
    * @param {string} userId (Optional) The Id for the user. If not provided a secure random UUID will be generated.
@@ -601,6 +617,20 @@ export class FusionAuthClient {
     return this.start()
         .withUri('/api/tenant')
         .withUriSegment(tenantId)
+        .withMethod("DELETE")
+        .go<void>();
+  }
+
+  /**
+   * Deletes the theme for the given Id.
+   *
+   * @param {string} themeId The Id of the theme to delete.
+   * @returns {Promise<ClientResponse<void>>}
+   */
+  deleteTheme(themeId: string): Promise<ClientResponse<void>> {
+    return this.start()
+        .withUri('/api/theme')
+        .withUriSegment(themeId)
         .withMethod("DELETE")
         .go<void>();
   }
@@ -1754,6 +1784,32 @@ export class FusionAuthClient {
   }
 
   /**
+   * Retrieves the theme for the given Id.
+   *
+   * @param {string} themeId The Id of the theme.
+   * @returns {Promise<ClientResponse<ThemeResponse>>}
+   */
+  retrieveTheme(themeId: string): Promise<ClientResponse<ThemeResponse>> {
+    return this.start()
+        .withUri('/api/theme')
+        .withUriSegment(themeId)
+        .withMethod("GET")
+        .go<ThemeResponse>();
+  }
+
+  /**
+   * Retrieves all of the themes.
+   *
+   * @returns {Promise<ClientResponse<ThemeResponse>>}
+   */
+  retrieveThemes(): Promise<ClientResponse<ThemeResponse>> {
+    return this.start()
+        .withUri('/api/theme')
+        .withMethod("GET")
+        .go<ThemeResponse>();
+  }
+
+  /**
    * Retrieves the totals report. This contains all of the total counts for each application and the global registration
    * count.
    *
@@ -2429,6 +2485,22 @@ export class FusionAuthClient {
         .withJSONBody(request)
         .withMethod("PUT")
         .go<TenantResponse>();
+  }
+
+  /**
+   * Updates the theme with the given Id.
+   *
+   * @param {string} themeId The Id of the theme to update.
+   * @param {ThemeRequest} request The request that contains all of the new theme information.
+   * @returns {Promise<ClientResponse<ThemeResponse>>}
+   */
+  updateTheme(themeId: string, request: ThemeRequest): Promise<ClientResponse<ThemeResponse>> {
+    return this.start()
+        .withUri('/api/theme')
+        .withUriSegment(themeId)
+        .withJSONBody(request)
+        .withMethod("PUT")
+        .go<ThemeResponse>();
   }
 
   /**
