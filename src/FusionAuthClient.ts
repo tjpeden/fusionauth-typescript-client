@@ -4071,6 +4071,7 @@ export interface LoginTemplate {
   oauth2ChildRegistrationNotAllowedComplete?: string;
   oauth2CompleteRegistration?: string;
   oauth2Error?: string;
+  oauth2Passwordless?: string;
   oauth2Register?: string;
   oauth2TwoFactor?: string;
   passwordChange?: string;
