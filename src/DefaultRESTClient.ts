@@ -17,11 +17,12 @@
 import IRESTClient from "./IRESTClient";
 import ClientResponse from "./ClientResponse";
 
-let request = require("request");
+import fetch from 'cross-fetch'
 
 /**
  * @author Brett P
  * @author Tyler Scott
+ * @author TJ Peden
  */
 export default class DefaultRESTClient implements IRESTClient {
   public body: string;
@@ -39,7 +40,7 @@ export default class DefaultRESTClient implements IRESTClient {
    * @param {string} key The value of the authorization header.
    * @returns {DefaultRESTClient}
    */
-  withAuthorization(key): DefaultRESTClient {
+  withAuthorization(key: string): DefaultRESTClient {
     if (key === null || typeof key === 'undefined') {
       return this;
     }
@@ -51,7 +52,7 @@ export default class DefaultRESTClient implements IRESTClient {
   /**
    * Adds a segment to the request uri
    */
-  withUriSegment(segment): DefaultRESTClient {
+  withUriSegment(segment: string | number): DefaultRESTClient {
     if (segment === null || segment === undefined) {
       return this;
     }
@@ -98,7 +99,7 @@ export default class DefaultRESTClient implements IRESTClient {
   /**
    * Sets the http method for the request
    */
-  withMethod(method): DefaultRESTClient {
+  withMethod(method: string): DefaultRESTClient {
     this.method = method;
     return this;
   }
@@ -106,7 +107,7 @@ export default class DefaultRESTClient implements IRESTClient {
   /**
    * Sets the uri of the request
    */
-  withUri(uri): DefaultRESTClient {
+  withUri(uri: string): DefaultRESTClient {
     this.uri = uri;
     return this;
   }
@@ -117,7 +118,7 @@ export default class DefaultRESTClient implements IRESTClient {
    * @param name The name of the parameter.
    * @param value The value of the parameter, may be a string, object or number.
    */
-  withParameter(name, value): DefaultRESTClient {
+  withParameter(name: string, value: any): DefaultRESTClient {
     this.parameters[name] = value;
     return this;
   }
@@ -126,35 +127,26 @@ export default class DefaultRESTClient implements IRESTClient {
    * Run the request and return a promise. This promise will resolve if the request is successful
    * and reject otherwise.
    */
-  go<T>(): Promise<ClientResponse<T>> {
-    return new Promise<ClientResponse<T>>((resolve, reject) => {
-      request({
-        uri: this.getFullUrl(),
-        method: this.method,
-        headers: this.headers,
-        body: this.body
-      }, (error, response, body) => {
-        let clientResponse = new ClientResponse<T>();
-        if (error) {
-          clientResponse.exception = error;
-          reject(clientResponse);
-        } else {
-          clientResponse.statusCode = response.statusCode;
-          clientResponse.response = body;
+  async go<T>(): Promise<ClientResponse<T>> {
+    const clientResponse = new ClientResponse<T>()
+    
+    try {
+      const response = await fetch(
+        this.getFullUrl(),
+        {
+          method: this.method,
+          headers: this.headers,
+          body: this.body,
+        },
+      )
+  
+      clientResponse.statusCode = response.status
+      clientResponse.response = await response.json()
+    } catch (error) {
+      clientResponse.exception = error
+    }
 
-          try { // Try parsing as json
-            clientResponse.response = JSON.parse(body);
-          } catch (e) {
-          }
-
-          if (clientResponse.wasSuccessful()) {
-            resolve(clientResponse);
-          } else {
-            reject(clientResponse)
-          }
-        }
-      });
-    });
+    return clientResponse
   }
 
   private getQueryString() {
