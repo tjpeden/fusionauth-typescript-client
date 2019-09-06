@@ -21,12 +21,13 @@ import ClientResponse from "./ClientResponse";
 
 export class FusionAuthClient {
   public clientBuilder: IRESTClientBuilder = new DefaultRESTClientBuilder();
+  public credentials: RequestCredentials;
 
-  constructor(public apiKey: string, public host: string, public tenantId?: string) {
-    this.apiKey = apiKey;
-    this.host = host;
-    this.tenantId = tenantId;
-  }
+  constructor(
+    public apiKey: string,
+    public host: string,
+    public tenantId?: string,
+  ) { }
 
   /**
    * Sets the tenant id, that will be included in the X-FusionAuth-TenantId header.
@@ -34,8 +35,18 @@ export class FusionAuthClient {
    * @param {string | null} tenantId The value of the X-FusionAuth-TenantId header.
    * @returns {FusionAuthClient}
    */
-  setTenantId(tenantId: string | null) {
+  setTenantId(tenantId: string | null): FusionAuthClient {
     this.tenantId = tenantId;
+    return this;
+  }
+
+  /**
+   * Sets whether and how cookies will be sent with each request.
+   * 
+   * @param value The value that indicates whether and how cookies will be sent.
+   */
+  setRequestCredentials(value: RequestCredentials): FusionAuthClient {
+    this.credentials = value;
     return this;
   }
 

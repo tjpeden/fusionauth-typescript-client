@@ -26,10 +26,11 @@ import fetch from 'cross-fetch'
  */
 export default class DefaultRESTClient implements IRESTClient {
   public body: string;
-  public headers: {[key: string]:string} = {};
+  public headers: Record<string, string> = {};
   public method: string;
-  public parameters: {[key: string]:string} = {};
+  public parameters: Record<string, string> = {};
   public uri: string;
+  public credentials: RequestCredentials;
 
   constructor(public host: string) {
   }
@@ -124,6 +125,16 @@ export default class DefaultRESTClient implements IRESTClient {
   }
 
   /**
+   * Sets request's credentials.
+   * 
+   * @param value A string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL.
+   */
+  withCredentials(value: RequestCredentials): DefaultRESTClient {
+    this.credentials = value;
+    return this;
+  }
+
+  /**
    * Run the request and return a promise. This promise will resolve if the request is successful
    * and reject otherwise.
    */
@@ -137,6 +148,7 @@ export default class DefaultRESTClient implements IRESTClient {
           method: this.method,
           headers: this.headers,
           body: this.body,
+          credentials: this.credentials,
         },
       )
   

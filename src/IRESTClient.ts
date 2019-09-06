@@ -64,6 +64,13 @@ export default interface IRESTClient {
   withParameter(name: string, value: any): IRESTClient;
 
   /**
+   * Sets request's credentials.
+   * 
+   * @param value A string indicating whether credentials will be sent with the request always, never, or only when sent to a same-origin URL.
+   */
+  withCredentials(value: RequestCredentials): IRESTClient;
+
+  /**
    * Run the request and return a promise. This promise will resolve if the request is successful
    * and reject otherwise.
    */
