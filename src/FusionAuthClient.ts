@@ -2690,11 +2690,11 @@ export class FusionAuthClient {
   private start(): IRESTClient {
     let client = this.clientBuilder.build(this.host).withAuthorization(this.apiKey);
 
-    if (this.tenantId == null) {
+    if (this.tenantId != null) {
       client.withHeader('X-FusionAuth-TenantId', this.tenantId);
     }
 
-    if (this.credentials == null) {
+    if (this.credentials != null) {
       client.withCredentials(this.credentials);
     }
 
