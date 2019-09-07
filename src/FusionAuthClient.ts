@@ -44,6 +44,7 @@ export class FusionAuthClient {
    * Sets whether and how cookies will be sent with each request.
    * 
    * @param value The value that indicates whether and how cookies will be sent.
+   * @returns {FusionAuthClient}
    */
   setRequestCredentials(value: RequestCredentials): FusionAuthClient {
     this.credentials = value;
@@ -2689,8 +2690,12 @@ export class FusionAuthClient {
   private start(): IRESTClient {
     let client = this.clientBuilder.build(this.host).withAuthorization(this.apiKey);
 
-    if (this.tenantId !== null && typeof(this.tenantId) !== 'undefined') {
+    if (this.tenantId == null) {
       client.withHeader('X-FusionAuth-TenantId', this.tenantId);
+    }
+
+    if (this.credentials == null) {
+      client.withCredentials(this.credentials);
     }
 
     return client;
