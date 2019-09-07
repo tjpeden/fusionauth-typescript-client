@@ -158,7 +158,7 @@ export default class DefaultRESTClient implements IRESTClient {
       clientResponse.exception = error;
     }
     
-    if (!clientResponse.wasSuccessful) {
+    if (!clientResponse.wasSuccessful()) {
       throw clientResponse;
     }
 
