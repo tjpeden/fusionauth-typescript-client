@@ -139,7 +139,7 @@ export default class DefaultRESTClient implements IRESTClient {
    * and reject otherwise.
    */
   async go<T>(): Promise<ClientResponse<T>> {
-    const clientResponse = new ClientResponse<T>()
+    const clientResponse = new ClientResponse<T>();
     
     try {
       const response = await fetch(
@@ -150,15 +150,19 @@ export default class DefaultRESTClient implements IRESTClient {
           body: this.body,
           credentials: this.credentials,
         },
-      )
+      );
   
-      clientResponse.statusCode = response.status
-      clientResponse.response = await response.json()
+      clientResponse.statusCode = response.status;
+      clientResponse.response = await response.json();
     } catch (error) {
-      clientResponse.exception = error
+      clientResponse.exception = error;
+    }
+    
+    if (!clientResponse.wasSuccessful) {
+      throw clientResponse;
     }
 
-    return clientResponse
+    return clientResponse;
   }
 
   private getQueryString() {
